@@ -11,6 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
+from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 import backend.routing
@@ -19,5 +20,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ETTweb.settings")
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": URLRouter(backend.routing.websocket_urlpatterns),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            backend.routing.websocket_urlpatterns
+        )
+    ),
 })
